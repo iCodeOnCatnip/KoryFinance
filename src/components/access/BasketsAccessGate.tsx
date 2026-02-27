@@ -102,6 +102,7 @@ export function BasketsAccessGate({ children }: { children: React.ReactNode }) {
             <input
               value={code}
               onChange={(e) => setCode(e.target.value.toUpperCase())}
+              onKeyDown={(e) => e.key === "Enter" && !loading && code.trim() && handleUnlock()}
               placeholder="Enter access code"
               className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary/40"
             />

@@ -110,15 +110,23 @@ export async function getPurchaseRecordsSynced(
       localStorage.setItem(storageKey(walletPubkey), JSON.stringify(merged));
     }
     // Backfill any local-only records that never made it to the server.
+    // Sequential to avoid concurrent GET→SET races in appendWalletPurchaseRecord.
     const serverIds = new Set(serverRecords.map((r) => r.id));
     const localOnly = localRecords.filter((r) => !serverIds.has(r.id));
-    for (const record of localOnly) {
-      void fetch("/api/purchase-history", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ wallet: walletPubkey, record }),
-        keepalive: true,
-      }).catch(() => {});
+    if (localOnly.length > 0) {
+      void (async () => {
+        for (const record of localOnly) {
+          try {
+            await fetch("/api/purchase-history", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ wallet: walletPubkey, record }),
+            });
+          } catch {
+            // best-effort — local record already saved
+          }
+        }
+      })();
     }
     return merged;
   } catch {

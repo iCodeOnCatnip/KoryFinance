@@ -287,7 +287,8 @@ export async function executeBasketBuy(
     ) => Promise<VersionedTransaction[]>;
   },
   quotes: JupiterQuoteResponse[],
-  feeAmount: number
+  feeAmount: number,
+  onSigned?: () => void
 ): Promise<SwapResult> {
   if (quotes.length === 0) {
     return { success: false, error: "No quotes provided" };
@@ -314,6 +315,7 @@ export async function executeBasketBuy(
         );
 
       const signedRpcTxs = await wallet.signAllTransactions(rpcTxs);
+      onSigned?.();
       const txSignatures: string[] = [];
 
       for (const tx of signedRpcTxs) {

@@ -258,12 +258,12 @@ export function SwapPanel({
     setStatus("signing");
     setErrorMsg(null);
     try {
-      setStatus("submitting");
       const result = await executeBasketBuy(
         connection,
         { publicKey: wallet.publicKey, signAllTransactions: wallet.signAllTransactions },
         preview.quotes,
-        preview.totalFeeAmount
+        preview.totalFeeAmount,
+        () => setStatus("submitting")
       );
       if (result.success) {
         setStatus("success");

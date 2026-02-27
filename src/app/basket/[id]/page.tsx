@@ -330,7 +330,8 @@ function TxHistory({
         connection,
         { publicKey: wallet.publicKey, signAllTransactions: wallet.signAllTransactions },
         preview.quotes,
-        preview.totalFeeAmount
+        preview.totalFeeAmount,
+        () => setRedoStatus("submitting")
       );
       if (result.success) {
         const totalWeight = Object.values(redoRecord.weights).reduce((s, v) => s + v, 0) || 100;

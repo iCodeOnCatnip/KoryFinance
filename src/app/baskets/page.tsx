@@ -301,7 +301,8 @@ export default function Home() {
                               signAllTransactions: wallet.signAllTransactions,
                             },
                             preview.quotes,
-                            preview.totalFeeAmount
+                            preview.totalFeeAmount,
+                            () => setRedoStatus("submitting")
                           );
                           if (result.success) {
                             const totalWeight =
